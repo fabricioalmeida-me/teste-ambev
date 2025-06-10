@@ -1,11 +1,10 @@
-using Ambev.DeveloperEvaluation.Domain.ValueObject;
 using FluentValidation;
 
-namespace Ambev.DeveloperEvaluation.Domain.Validation.Products;
+namespace Ambev.DeveloperEvaluation.Application.Products.Shared;
 
-public class ProductRatingValidator : AbstractValidator<ProductRating>
+public class ProductRatingDtoValidator : AbstractValidator<ProductRatingDto>
 {
-    public ProductRatingValidator()
+    public ProductRatingDtoValidator()
     {
         RuleFor(r => r.Rate)
             .InclusiveBetween(0, 5)
