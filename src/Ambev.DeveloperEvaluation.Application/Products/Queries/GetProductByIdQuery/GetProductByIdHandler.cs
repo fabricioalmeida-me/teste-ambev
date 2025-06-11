@@ -1,3 +1,4 @@
+using Ambev.DeveloperEvaluation.Application.Caching;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
@@ -7,13 +8,15 @@ namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductByIdQ
 
 public class GetProductByIdHandler : IRequestHandler<GetProductByIdQuery, GetProductByIdResult>
 {
-    private readonly IProductRepository productRepository;
-    private readonly IMapper mapper;
+    private readonly IProductRepository _productRepository;
+    private readonly IMapper _mapper;
+    private readonly ICacheService _cacheService;
 
-    public GetProductByIdHandler(IProductRepository productRepository, IMapper mapper)
+    public GetProductByIdHandler(IProductRepository productRepository, IMapper mapper, ICacheService cacheService)
     {
-        this.productRepository = productRepository;
-        this.mapper = mapper;
+        _productRepository = productRepository;
+        _mapper = mapper;
+        _cacheService = cacheService;
     }
 
     public async Task<GetProductByIdResult> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
@@ -24,10 +27,18 @@ public class GetProductByIdHandler : IRequestHandler<GetProductByIdQuery, GetPro
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
         
-        var product = await productRepository.GetByIdAsync(request.Id, cancellationToken);
+        var cacheKey = $"products:{request.Id}";
+        var cached = await _cacheService.GetAsync<GetProductByIdResult>(cacheKey, cancellationToken);
+        if (cached is not null)
+            return cached;
+        
+        var product = await _productRepository.GetByIdAsync(request.Id, cancellationToken);
         if (product == null)
             throw new KeyNotFoundException($"Product with ID {request.Id} not found.");
         
-        return mapper.Map<GetProductByIdResult>(product);
+        var result = _mapper.Map<GetProductByIdResult>(product);
+        
+        await _cacheService.SetAsync(cacheKey, result, TimeSpan.FromMinutes(5), cancellationToken);
+        return result;
     }
 }
