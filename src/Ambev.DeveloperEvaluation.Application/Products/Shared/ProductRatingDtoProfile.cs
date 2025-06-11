@@ -5,10 +5,10 @@ using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.Shared;
 
-public class SharedProductProfile : Profile
+public class ProductRatingDtoProfile : Profile
 {
-    public SharedProductProfile()
+    public ProductRatingDtoProfile()
     {
-        CreateMap<ProductRatingDto, ProductRating>();
+        CreateMap<ProductRatingDto, ProductRating>().ReverseMap();
     }
 }

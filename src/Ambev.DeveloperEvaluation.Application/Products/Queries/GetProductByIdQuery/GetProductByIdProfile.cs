@@ -8,6 +8,6 @@ public class GetProductByIdProfile : Profile
 {
     public GetProductByIdProfile()
     {
-        CreateMap<Product, GetAllProductsResult>();
+        CreateMap<Product, GetProductByIdResult>();
     }
 }

@@ -9,8 +9,8 @@ public class CreateProductValidator : AbstractValidator<CreateProductCommand>
     {
         RuleFor(p => p.Title)
             .NotEmpty()
-            .MinimumLength(3).
-            MaximumLength(100);
+            .MinimumLength(3)
+            .MaximumLength(100);
 
         RuleFor(p => p.Price)
             .GreaterThan(0);
