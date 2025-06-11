@@ -5,6 +5,7 @@ using Ambev.DeveloperEvaluation.Unit.Domain;
 using AutoMapper;
 using FluentAssertions;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Xunit;
 
@@ -14,11 +15,13 @@ public class CreateProductHandlerTests
 {
     private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
+    private readonly ILogger<CreateProductHandler> _logger;
 
     public CreateProductHandlerTests()
     {
         _productRepository = Substitute.For<IProductRepository>();
         _mapper = Substitute.For<IMapper>();
+        _logger = Substitute.For<ILogger<CreateProductHandler>>();
     }
 
     [Fact(DisplayName = "Given valid product data When creating product Then returns success response")]
@@ -43,7 +46,7 @@ public class CreateProductHandlerTests
         _productRepository.CreateAsync(product, Arg.Any<CancellationToken>()).Returns(product);
         _mapper.Map<CreateProductResult>(product).Returns(result);
         
-        var handler = new CreateProductHandler(_productRepository, _mapper);
+        var handler = new CreateProductHandler(_productRepository, _mapper, _logger);
         
         // Act
         var response = await handler.Handle(command, CancellationToken.None);
@@ -59,7 +62,7 @@ public class CreateProductHandlerTests
     {
         // Arrange
         var invalidCommand = new CreateProductCommand();
-        var handler = new CreateProductHandler(_productRepository, _mapper);
+        var handler = new CreateProductHandler(_productRepository, _mapper, _logger);
 
         // Act
         var act = () => handler.Handle(invalidCommand, CancellationToken.None);
@@ -88,7 +91,7 @@ public class CreateProductHandlerTests
         _productRepository.CreateAsync(product, Arg.Any<CancellationToken>()).Returns(product);
         _mapper.Map<CreateProductResult>(product).Returns(new CreateProductResult { Id = product.Id });
 
-        var handler = new CreateProductHandler(_productRepository, _mapper);
+        var handler = new CreateProductHandler(_productRepository, _mapper, _logger);
 
         // Act
         await handler.Handle(command, CancellationToken.None);

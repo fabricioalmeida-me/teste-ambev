@@ -3,6 +3,7 @@ using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetAllProductsQuery;
 
@@ -10,23 +11,36 @@ public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, IEnume
 {
     private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
+    private readonly ILogger<GetAllProductsHandler> _logger;
     private readonly ICacheService _cacheService;
     private const string CacheKey = "products:getall";
 
-    public GetAllProductsHandler(IProductRepository productRepository, IMapper mapper, ICacheService cacheService)
+    public GetAllProductsHandler(
+        IProductRepository productRepository, 
+        IMapper mapper, 
+        ILogger<GetAllProductsHandler> logger,
+        ICacheService cacheService)
     {
         _productRepository = productRepository;
         _mapper = mapper;
+        _logger = logger;
         _cacheService = cacheService;
     }
 
     public async Task<IEnumerable<GetAllProductsResult>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Handling request to get all products. Page: {Page}, Size: {Size}, Order: {Order}",
+            request.Page, request.Size, request.Order ?? "none");
+        
         var validator = new GetAllProductsValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
-        
+
         if (!validationResult.IsValid)
+        {
+            _logger.LogWarning("Validation failed in GetAllProducts. Errors: {Errors}",
+                string.Join(" | ", validationResult.Errors.Select(e => $"{e.PropertyName}: {e.ErrorMessage}")));
             throw new ValidationException(validationResult.Errors);
+        }
         
         var cached = await _cacheService.GetAsync<IEnumerable<GetAllProductsResult>>(CacheKey, cancellationToken);
         if (cached is not null)
@@ -36,6 +50,7 @@ public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, IEnume
         var result = _mapper.Map<IEnumerable<GetAllProductsResult>>(products);
         
         await _cacheService.SetAsync(CacheKey, result, TimeSpan.FromMinutes(5), cancellationToken);
+        
         return result;
     }
 }
