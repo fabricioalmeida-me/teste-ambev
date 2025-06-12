@@ -1,86 +1,151 @@
-# Developer Evaluation Project
+# 🧪 Ambev Developer Evaluation - Product API
 
-`READ CAREFULLY`
+This repository is part of the technical assessment for a Senior Fullstack .NET Developer position at Ambev Tech. The focus of this implementation is the **Product API**, fully covering architectural structure, validation, logging, testing, and best practices.
 
-## Instructions
-**The test below will have up to 7 calendar days to be delivered from the date of receipt of this manual.**
+---
 
-- The code must be versioned in a public Github repository and a link must be sent for evaluation once completed
-- Upload this template to your repository and start working from it
-- Read the instructions carefully and make sure all requirements are being addressed
-- The repository must provide instructions on how to configure, execute and test the project
-- Documentation and overall organization will also be taken into consideration
+## 📦 Overview
 
-## Use Case
-**You are a developer on the DeveloperStore team. Now we need to implement the API prototypes.**
+This API provides:
 
-As we work with `DDD`, to reference entities from other domains, we use the `External Identities` pattern with denormalization of entity descriptions.
+- Product creation
+- Product updates
+- Paginated and sorted listings
+- Filtering by category
+- Product deletion
+- Listing all distinct product categories
+- Caching for optimized queries
+- FluentValidation and structured logging
 
-Therefore, you will write an API (complete CRUD) that handles sales records. The API needs to be able to inform:
+The system follows the principles of **Hexagonal Architecture (Ports & Adapters)**.
 
-* Sale number
-* Date when the sale was made
-* Customer
-* Total sale amount
-* Branch where the sale was made
-* Products
-* Quantities
-* Unit prices
-* Discounts
-* Total amount for each item
-* Cancelled/Not Cancelled
+---
 
-It's not mandatory, but it would be a differential to build code for publishing events of:
-* SaleCreated
-* SaleModified
-* SaleCancelled
-* ItemCancelled
+## 🧱 Project Structure
 
-If you write the code, **it's not required** to actually publish to any Message Broker. You can log a message in the application log or however you find most convenient.
+- `Domain`: Entities, enums and domain-level validation
+- `Application`: Commands, queries, DTOs and MediatR handlers
+- `WebApi`: Controllers, mappings and request validators
+- `ORM`: EF Core entity mappings and database migrations
+- `Common`: Logging, validation and reusable interfaces
+- `IoC`: Dependency injection container setup (service registrations)
 
-### Business Rules
+---
 
-* Purchases above 4 identical items have a 10% discount
-* Purchases between 10 and 20 identical items have a 20% discount
-* It's not possible to sell above 20 identical items
-* Purchases below 4 items cannot have a discount
+## 🚀 How to Run the Project
 
-These business rules define quantity-based discounting tiers and limitations:
+### Requirements
 
-1. Discount Tiers:
-   - 4+ items: 10% discount
-   - 10-20 items: 20% discount
+- .NET 8 SDK
+- Docker & Docker Compose
 
-2. Restrictions:
-   - Maximum limit: 20 items per product
-   - No discounts allowed for quantities below 4 items
+### Steps
 
-## Overview
-This section provides a high-level overview of the project and the various skills and competencies it aims to assess for developer candidates. 
+```bash
+# Start infrastructure (PostgreSQL + Redis)
+> docker-compose up -d
 
-See [Overview](/.doc/overview.md)
+# Restore dependencies
+> dotnet restore Ambev.DeveloperEvaluation.sln
 
-## Tech Stack
-This section lists the key technologies used in the project, including the backend, testing, frontend, and database components. 
+# Apply database migrations
+> dotnet ef database update --project src/Ambev.DeveloperEvaluation.WebApi --startup-project src/Ambev.DeveloperEvaluation.WebApi
 
-See [Tech Stack](/.doc/tech-stack.md)
+# Run the API
+> dotnet run --project src/Ambev.DeveloperEvaluation.WebApi
+```
 
-## Frameworks
-This section outlines the frameworks and libraries that are leveraged in the project to enhance development productivity and maintainability. 
+Swagger UI available at:
 
-See [Frameworks](/.doc/frameworks.md)
+```
+https://localhost:7181/swagger
+```
 
-<!-- 
-## API Structure
-This section includes links to the detailed documentation for the different API resources:
-- [API General](./docs/general-api.md)
-- [Products API](/.doc/products-api.md)
-- [Carts API](/.doc/carts-api.md)
-- [Users API](/.doc/users-api.md)
-- [Auth API](/.doc/auth-api.md)
--->
+---
 
-## Project Structure
-This section describes the overall structure and organization of the project files and directories. 
+## 🌱 Test Seed Data
 
-See [Project Structure](/.doc/project-structure.md)
+When running the project for the first time, it automatically seeds the database with sample `Product` data to facilitate API testing and development.
+
+---
+
+## 📮 Available Endpoints
+
+- `GET /api/products` - List all products (paginated and sorted)
+- `GET /api/products/{id}` - Get product by ID
+- `GET /api/products/category/{category}` - List products by category
+- `GET /api/products/categories` - List all categories
+- `POST /api/products` - Create a new product
+- `PUT /api/products/{id}` - Update a product
+- `DELETE /api/products/{id}` - Delete a product
+
+All endpoints include validation and consistent `ApiResponse` formatting.
+
+---
+
+## 🧪 Testing
+
+Unit tests are located in the `Ambev.DeveloperEvaluation.Unit` project.
+
+```bash
+> dotnet test
+```
+
+- Unit tests for domain entities (`ProductTests.cs`)
+- Validation scenarios
+- Test data generation using Bogus (`ProductTestData.cs`)
+
+---
+
+## 🛠️ Technologies Used
+
+- .NET 8
+- MediatR (CQRS)
+- FluentValidation
+- AutoMapper
+- Entity Framework Core
+- PostgreSQL
+- Redis (via `ICacheService` abstraction)
+- xUnit + Bogus
+- Swagger
+
+---
+
+## 🎯 Architecture and Practices
+
+- **Hexagonal Architecture (Ports & Adapters)**
+- CQRS pattern
+- AutoMapper for DTO mappings
+- Global exception handling via middleware
+- Structured logging with `ILogger<T>`
+- Response caching with custom keys per parameter
+
+---
+
+## ✅ Implemented Features
+
+- Full `Products` API including all endpoints
+- Domain entities, validators, repositories and CQRS handlers
+- Logging and caching
+- Unit tests for domain rules
+- PostgreSQL database with seeding
+
+---
+
+## 🚧 Not Implemented
+
+- `Cart` and `User` APIs
+- Integration tests
+
+**Reason:** Focused on delivering a high-quality implementation of the `Product` feature, covering all non-functional requirements and architecture standards.
+
+---
+
+## 🤝 Contact
+
+Developed by [Fabrício da Silva Almeida](https://github.com/fabricioalmeida-me).
+
+---
+
+> *This project was developed as part of Ambev Tech's technical assessment.*
+

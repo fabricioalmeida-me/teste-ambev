@@ -6,6 +6,7 @@ using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.IoC;
 using Ambev.DeveloperEvaluation.ORM;
 using Ambev.DeveloperEvaluation.WebApi.Middleware;
+using Ambev.DeveloperEvaluation.WebApi.Seed;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -14,7 +15,7 @@ namespace Ambev.DeveloperEvaluation.WebApi;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         try
         {
@@ -35,6 +36,11 @@ public class Program
                     b => b.MigrationsAssembly("Ambev.DeveloperEvaluation.ORM")
                 )
             );
+            
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = builder.Configuration.GetConnectionString("Redis");
+            });
 
             builder.Services.AddJwtAuthentication(builder.Configuration);
 
@@ -59,6 +65,8 @@ public class Program
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                await ProductSeeder.SeedAsync(app.Services);
+                
             }
 
             app.UseHttpsRedirection();
