@@ -1,11 +1,9 @@
-using Ambev.DeveloperEvaluation.Application.Carts.Queries.GetAllCartsQuery.Dtos;
-
-namespace Ambev.DeveloperEvaluation.Application.Carts.Queries.GetAllCartsQuery;
+namespace Ambev.DeveloperEvaluation.Application.Carts.Queries.GetAllCarts;
 
 public class GetAllCartsResult
 {
     public Guid Id { get; set; }
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
     public DateTime Date { get; set; }
-    public List<CartItemDto> Products { get; set; } = new();
+    public List<GetAllCartsItemResult> Products { get; set; } = new();
 }

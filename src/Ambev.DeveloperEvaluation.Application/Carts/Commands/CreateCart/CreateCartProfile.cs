@@ -1,4 +1,3 @@
-using Ambev.DeveloperEvaluation.Application.Carts.Commands.CreateCartCommand;
 using Ambev.DeveloperEvaluation.Domain.Entities.Carts;
 using AutoMapper;
 
@@ -9,8 +8,9 @@ public class CreateCartProfile : Profile
     public CreateCartProfile()
     {
         CreateMap<CreateCartCommand, Cart>();
-        CreateMap<CartItemCreateDto, CartItem>();
+        CreateMap<CreateCartItemCommand, CartItem>();
+
         CreateMap<Cart, CreateCartResult>();
-        CreateMap<CartItem, CartItemResultDto>();
+        CreateMap<CartItem, CreateCartItemResult>();
     }
 }

@@ -19,7 +19,7 @@ public class CartConfiguration : IEntityTypeConfiguration<Cart>
             .IsRequired();
 
         builder.HasMany(c => c.Items)
-            .WithOne()
+            .WithOne(ci => ci.Cart)
             .HasForeignKey(ci => ci.CartId)
             .OnDelete(DeleteBehavior.Cascade);
     }

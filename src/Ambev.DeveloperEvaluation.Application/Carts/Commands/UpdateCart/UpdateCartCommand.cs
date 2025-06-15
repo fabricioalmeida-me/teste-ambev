@@ -8,5 +8,5 @@ public class UpdateCartCommand : IRequest<UpdateCartResult>
     public Guid UserId { get; set; }
     public DateTime Date { get; set; }
 
-    public List<CartItemUpdateDto> Products { get; set; } = new();
+    public List<UpdateCartItemCommand> Products { get; set; } = new();
 }

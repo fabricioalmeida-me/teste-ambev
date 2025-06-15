@@ -8,11 +8,11 @@ public class UpdateCartProfile : Profile
     public UpdateCartProfile()
     {
         CreateMap<UpdateCartCommand, Cart>();
-        CreateMap<CartItemUpdateDto, CartItem>();
+        CreateMap<UpdateCartItemCommand, CartItem>();
         
         CreateMap<Cart, UpdateCartResult>()
             .ForMember(dest => dest.Products, opt => opt.MapFrom(src => src.Items));
         
-        CreateMap<CartItem, CartItemResultDto>();
+        CreateMap<CartItem, UpdateCartItemResult>();
     }
 }

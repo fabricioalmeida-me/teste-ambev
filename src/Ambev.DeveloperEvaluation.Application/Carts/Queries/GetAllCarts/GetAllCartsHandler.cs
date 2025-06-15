@@ -5,7 +5,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Ambev.DeveloperEvaluation.Application.Carts.Queries.GetAllCartsQuery;
+namespace Ambev.DeveloperEvaluation.Application.Carts.Queries.GetAllCarts;
 
 public class GetAllCartsHandler : IRequestHandler<GetAllCartsQuery, IEnumerable<GetAllCartsResult>>
 {

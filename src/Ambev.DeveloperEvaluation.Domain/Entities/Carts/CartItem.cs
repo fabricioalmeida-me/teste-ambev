@@ -10,7 +10,9 @@ public class CartItem : BaseEntity
     public decimal Discount { get; private set; }
 
     public decimal Total => (UnitPrice * Quantity) - Discount;
-
+    
+    public Cart Cart { get; private set; } = null!;
+    
     private CartItem() { }
 
     public CartItem(Guid cartId, Guid productId, int quantity, decimal unitPrice)

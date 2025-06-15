@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Ambev.DeveloperEvaluation.Application.Carts.Queries.GetAllCartsQuery;
+namespace Ambev.DeveloperEvaluation.Application.Carts.Queries.GetAllCarts;
 
 public class GetAllCartsValidator : AbstractValidator<GetAllCartsQuery>
 {

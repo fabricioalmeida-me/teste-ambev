@@ -1,4 +1,3 @@
-using Ambev.DeveloperEvaluation.Application.Carts.Queries.GetCartById.Dtos;
 using Ambev.DeveloperEvaluation.Domain.Entities.Carts;
 using AutoMapper;
 
@@ -9,6 +8,6 @@ public class GetCartByIdProfile : Profile
     public GetCartByIdProfile()
     {
         CreateMap<Cart, GetCartByIdResult>();
-        CreateMap<CartItem, CartItemDto>();
+        CreateMap<CartItem, GetCartByIdItemResult>();
     }
 }

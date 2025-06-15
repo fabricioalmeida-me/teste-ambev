@@ -2,9 +2,9 @@ using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.Application.Carts.Commands.UpdateCart;
 
-public class CartItemUpdateValidator : AbstractValidator<CartItemUpdateDto>
+public class UpdateCartItemValidator : AbstractValidator<UpdateCartItemCommand>
 {
-    public CartItemUpdateValidator()
+    public UpdateCartItemValidator()
     {
         RuleFor(p => p.ProductId)
             .NotEmpty().WithMessage("Product ID is required.");

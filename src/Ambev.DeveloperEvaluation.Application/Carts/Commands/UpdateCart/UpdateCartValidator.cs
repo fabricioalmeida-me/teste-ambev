@@ -15,6 +15,6 @@ public class UpdateCartValidator : AbstractValidator<UpdateCartCommand>
         RuleFor(x => x.Date)
             .NotEmpty().WithMessage("Date is required.");
 
-        RuleForEach(x => x.Products).SetValidator(new CartItemUpdateValidator());
+        RuleForEach(x => x.Products).SetValidator(new UpdateCartItemValidator());
     }
 }

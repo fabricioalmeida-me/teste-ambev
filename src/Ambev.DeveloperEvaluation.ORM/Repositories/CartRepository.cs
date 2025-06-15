@@ -22,7 +22,11 @@ public class CartRepository : ICartRepository
 
     public async Task<IEnumerable<Cart>> GetAllAsync(int page, int size, string? order, CancellationToken cancellationToken = default)
     {
-        var query = _context.Carts.Include(c => c.Items).AsQueryable();
+        var query = _context.Carts
+            .Include(c => c.Items)
+            .AsQueryable();
+        
+        var sql = query.ToQueryString();
 
         if (!string.IsNullOrWhiteSpace(order))
         {

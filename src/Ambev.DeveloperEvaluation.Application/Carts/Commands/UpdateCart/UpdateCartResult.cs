@@ -6,5 +6,5 @@ public class UpdateCartResult
     public Guid UserId { get; set; }
     public DateTime Date { get; set; }
     public decimal Total { get; set; }
-    public List<CartItemResultDto> Products { get; set; } = new();
+    public List<UpdateCartItemResult> Products { get; set; } = new();
 }
