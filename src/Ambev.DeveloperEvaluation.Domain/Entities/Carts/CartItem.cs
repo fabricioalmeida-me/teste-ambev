@@ -1,17 +1,18 @@
 using Ambev.DeveloperEvaluation.Domain.Common;
+using Ambev.DeveloperEvaluation.Domain.Entities.Products;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities.Carts;
 public class CartItem : BaseEntity
 {
-    public Guid CartId { get; private set; } 
+    public Guid CartId { get; private set; }
+    public Cart Cart { get; private set; } = null!;
     public Guid ProductId { get; private set; }
+    public Product Product { get; private set; } = null!;
     public int Quantity { get; private set; }
     public decimal UnitPrice { get; private set; }
     public decimal Discount { get; private set; }
 
     public decimal Total => (UnitPrice * Quantity) - Discount;
-    
-    public Cart Cart { get; private set; } = null!;
     
     private CartItem() { }
 

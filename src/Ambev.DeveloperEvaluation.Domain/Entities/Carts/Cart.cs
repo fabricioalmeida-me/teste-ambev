@@ -7,11 +7,10 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities.Carts;
 public class Cart : BaseEntity
 {
     public Guid UserId { get; private set; }
+    public User User { get; private set; } = null!;
     public DateTime Date { get; private set; }
     public List<CartItem> Items { get; private set; } = new();
-
     public decimal Total => Items.Sum(i => i.Total);
-    
     private Cart() { }
 
     public Cart(Guid userId, DateTime date)
