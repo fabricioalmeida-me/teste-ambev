@@ -9,5 +9,6 @@ public class GetCartByIdProfile : Profile
     {
         CreateMap<GetCartByIdRequest, GetCartByIdQuery>();
         CreateMap<GetCartByIdResult, GetCartByIdResponse>();
+        CreateMap<GetCartByIdItemResult, GetCartByIdItemResponse>();
     }
 }

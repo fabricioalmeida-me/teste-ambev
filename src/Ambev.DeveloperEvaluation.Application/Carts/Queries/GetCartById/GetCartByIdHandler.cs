@@ -43,8 +43,8 @@ public class GetCartByIdHandler : IRequestHandler<GetCartByIdQuery, GetCartByIdR
 
         var cacheKey = $"carts:{request.Id}";
         var cached = await _cache.GetAsync<GetCartByIdResult>(cacheKey, cancellationToken);
-        if (cached is not null)
-            return cached;
+        // if (cached is not null)
+        //     return cached;
 
         var cart = await _cartRepository.GetByIdAsync(request.Id, cancellationToken);
         if (cart is null)
