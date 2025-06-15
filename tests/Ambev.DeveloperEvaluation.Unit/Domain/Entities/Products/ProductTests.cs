@@ -2,7 +2,7 @@ using Ambev.DeveloperEvaluation.Domain.ValueObject;
 using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData;
 using Xunit;
 
-namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.Product;
+namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.Products;
 
 public class ProductTests
 {

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Xunit;
 
-namespace Ambev.DeveloperEvaluation.Unit.Application.Product;
+namespace Ambev.DeveloperEvaluation.Unit.Application.Products;
 
 public class CreateProductHandlerTests
 {

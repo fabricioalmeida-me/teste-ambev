@@ -3,7 +3,7 @@ using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData;
 using FluentValidation.TestHelper;
 using Xunit;
 
-namespace Ambev.DeveloperEvaluation.Unit.Domain.Validation.Product;
+namespace Ambev.DeveloperEvaluation.Unit.Domain.Validation.Products;
 
 public class ProductValidatorTests
 {

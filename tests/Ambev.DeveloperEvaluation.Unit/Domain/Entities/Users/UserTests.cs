@@ -3,7 +3,7 @@ using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData;
 using Xunit;
 
-namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities;
+namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.Users;
 
 /// <summary>
 /// Contains unit tests for the User entity class.

@@ -3,7 +3,7 @@ using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData;
 using FluentValidation.TestHelper;
 using Xunit;
 
-namespace Ambev.DeveloperEvaluation.Unit.Domain.Validation;
+namespace Ambev.DeveloperEvaluation.Unit.Domain.Validation.Users;
 
 /// <summary>
 /// Contains unit tests for the EmailValidator class.
