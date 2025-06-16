@@ -1,5 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Enums;
-using Ambev.DeveloperEvaluation.Domain.Validation;
+using Ambev.DeveloperEvaluation.Domain.Validation.Users;
 using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
@@ -29,5 +29,14 @@ public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
         RuleFor(user => user.Phone).Matches(@"^\+?[1-9]\d{1,14}$");
         RuleFor(user => user.Status).NotEqual(UserStatus.Unknown);
         RuleFor(user => user.Role).NotEqual(UserRole.None);
+        
+        RuleFor(user => user.FirstName).NotEmpty().MaximumLength(50);
+        RuleFor(user => user.LastName).NotEmpty().MaximumLength(50);
+        RuleFor(user => user.City).NotEmpty().MaximumLength(100);
+        RuleFor(user => user.Street).NotEmpty().MaximumLength(100);
+        RuleFor(user => user.Number).GreaterThan(0);
+        RuleFor(user => user.ZipCode).NotEmpty().MaximumLength(20);
+        RuleFor(user => user.Latitude).NotEmpty();
+        RuleFor(user => user.Longitude).NotEmpty();
     }
 }

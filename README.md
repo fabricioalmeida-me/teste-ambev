@@ -1,6 +1,6 @@
-# 🧪 Ambev Developer Evaluation - Product API
+# 🧪 Ambev Developer Evaluation - Full API (Cart, Product, User, Auth)
 
-This repository is part of the technical assessment for a Senior Fullstack .NET Developer position at Ambev Tech. The focus of this implementation is the **Product API**, fully covering architectural structure, validation, logging, testing, and best practices.
+This repository is part of the technical assessment for a Senior Fullstack .NET Developer position at Ambev Tech. The focus of this implementation is the **Full API**, including Cart, Product, User, and Auth functionalities, fully covering architectural structure, validation, logging, testing, and best practices.
 
 ---
 
@@ -8,27 +8,27 @@ This repository is part of the technical assessment for a Senior Fullstack .NET 
 
 This API provides:
 
-- Product creation
-- Product updates
-- Paginated and sorted listings
-- Filtering by category
-- Product deletion
-- Listing all distinct product categories
-- Caching for optimized queries
-- FluentValidation and structured logging
+- Product management: creation, updates, pagination, sorting, filtering, and deletion.
+- Cart management: creation, update, and deletion of shopping carts.
+- User management: registration, updating user details, and retrieval.
+- Authentication and authorization: token-based authentication for secure access.
+- Paginated and sorted listings.
+- Caching for optimized queries.
+- FluentValidation and structured logging.
 
-The system follows the principles of **Hexagonal Architecture (Ports & Adapters)**.
+The system follows the principles of **Hexagonal Architecture (Ports & Adapters)**, **CQRS**, and **Result Pattern**.
 
 ---
 
 ## 🧱 Project Structure
 
-- `Domain`: Entities, enums and domain-level validation
-- `Application`: Commands, queries, DTOs and MediatR handlers
-- `WebApi`: Controllers, mappings and request validators
-- `ORM`: EF Core entity mappings and database migrations
-- `Common`: Logging, validation and reusable interfaces
-- `IoC`: Dependency injection container setup (service registrations)
+- `Domain`: Entities, enums, domain-level validation, and value objects.
+- `Application`: Commands, queries, DTOs, MediatR handlers, and business logic.
+- `WebApi`: Controllers, mappings, request validators, and API endpoints.
+- `ORM`: EF Core entity mappings, database migrations, and PostgreSQL setup.
+- `Common`: Logging, validation, result pattern, and reusable interfaces.
+- `IoC`: Dependency injection container setup (service registrations).
+- `Auth`: Authentication and authorization logic (JWT token generation and validation).
 
 ---
 
@@ -79,6 +79,19 @@ When running the project for the first time, it automatically seeds the database
 - `PUT /api/products/{id}` - Update a product
 - `DELETE /api/products/{id}` - Delete a product
 
+- `GET /api/carts` - List all carts (paginated and sorted)
+- `GET /api/carts/{id}` - Get cart by ID
+- `POST /api/carts` - Create a new cart
+- `DELETE /api/carts/{id}` - Delete a cart
+
+- `GET /api/users` - List all users (paginated and sorted)
+- `GET /api/users/{id}` - Get user by ID
+- `POST /api/users` - Register a new user
+- `PUT /api/users/{id}` - Update user details
+
+- `POST /api/auth/login` - User login (returns JWT token)
+- `POST /api/auth/register` - Register a new user
+
 All endpoints include validation and consistent `ApiResponse` formatting.
 
 ---
@@ -91,9 +104,10 @@ Unit tests are located in the `Ambev.DeveloperEvaluation.Unit` project.
 > dotnet test
 ```
 
-- Unit tests for domain entities (`ProductTests.cs`)
+- Unit tests for domain entities (`ProductTests.cs`, `CartTests.cs`, `UserTests.cs`)
 - Validation scenarios
-- Test data generation using Bogus (`ProductTestData.cs`)
+- Test data generation using Bogus (`ProductTestData.cs`, `CartTestData.cs`, `UserTestData.cs`)
+- Integration tests for basic flow (Auth, User, Cart, Product)
 
 ---
 
@@ -106,6 +120,7 @@ Unit tests are located in the `Ambev.DeveloperEvaluation.Unit` project.
 - Entity Framework Core
 - PostgreSQL
 - Redis (via `ICacheService` abstraction)
+- JWT Authentication
 - xUnit + Bogus
 - Swagger
 
@@ -114,30 +129,31 @@ Unit tests are located in the `Ambev.DeveloperEvaluation.Unit` project.
 ## 🎯 Architecture and Practices
 
 - **Hexagonal Architecture (Ports & Adapters)**
-- CQRS pattern
+- CQRS pattern for read and write operations
+- Result Pattern used for returning standardized results (success/failure with specific types)
 - AutoMapper for DTO mappings
 - Global exception handling via middleware
 - Structured logging with `ILogger<T>`
 - Response caching with custom keys per parameter
+- JWT-based Authentication and Authorization
+- Validation and consistent API responses using FluentValidation
 
 ---
 
 ## ✅ Implemented Features
 
-- Full `Products` API including all endpoints
-- Domain entities, validators, repositories and CQRS handlers
-- Logging and caching
-- Unit tests for domain rules
+- Full `Products`, `Carts`, `Users`, and `Auth` APIs including all endpoints
+- Domain entities, validators, repositories, and CQRS handlers for Cart, Product, User, and Auth
+- Logging, caching, and validation
+- JWT-based authentication and authorization
+- Unit tests for domain rules and application logic
 - PostgreSQL database with seeding
 
 ---
 
 ## 🚧 Not Implemented
 
-- `Cart` and `User` APIs
-- Integration tests
-
-**Reason:** Focused on delivering a high-quality implementation of the `Product` feature, covering all non-functional requirements and architecture standards.
+- **Integration tests for external services**
 
 ---
 
@@ -147,5 +163,4 @@ Developed by [Fabrício da Silva Almeida](https://github.com/fabricioalmeida-me)
 
 ---
 
-> *This project was developed as part of Ambev Tech's technical assessment.*
-
+> _This project was developed as part of Ambev Tech's technical assessment._

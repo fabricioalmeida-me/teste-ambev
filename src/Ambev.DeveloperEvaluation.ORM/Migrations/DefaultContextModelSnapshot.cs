@@ -216,6 +216,98 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.User", b =>
+                {
+                    b.OwnsOne("Ambev.DeveloperEvaluation.Domain.ValueObject.Users.Address", "Address", b1 =>
+                        {
+                            b1.Property<Guid>("UserId")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
+
+                            b1.Property<int>("Number")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
+
+                            b1.Property<string>("Zipcode")
+                                .IsRequired()
+                                .HasMaxLength(20)
+                                .HasColumnType("character varying(20)");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+
+                            b1.OwnsOne("Ambev.DeveloperEvaluation.Domain.ValueObject.Users.GeoLocation", "Geolocation", b2 =>
+                                {
+                                    b2.Property<Guid>("AddressUserId")
+                                        .ValueGeneratedOnAdd()
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<string>("Lat")
+                                        .IsRequired()
+                                        .HasMaxLength(20)
+                                        .HasColumnType("character varying(20)");
+
+                                    b2.Property<string>("Long")
+                                        .IsRequired()
+                                        .HasMaxLength(20)
+                                        .HasColumnType("character varying(20)");
+
+                                    b2.HasKey("AddressUserId");
+
+                                    b2.ToTable("Users");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("AddressUserId");
+                                });
+
+                            b1.Navigation("Geolocation")
+                                .IsRequired();
+                        });
+
+                    b.OwnsOne("Ambev.DeveloperEvaluation.Domain.ValueObject.Users.Name", "Name", b1 =>
+                        {
+                            b1.Property<Guid>("UserId")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Firstname")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)");
+
+                            b1.Property<string>("Lastname")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.Navigation("Address")
+                        .IsRequired();
+
+                    b.Navigation("Name")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.Carts.Cart", b =>
                 {
                     b.Navigation("Items");

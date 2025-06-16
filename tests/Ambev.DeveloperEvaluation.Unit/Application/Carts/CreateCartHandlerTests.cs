@@ -1,6 +1,6 @@
 using Ambev.DeveloperEvaluation.Application.Carts.Commands.CreateCart;
 using Ambev.DeveloperEvaluation.Application.Carts.Services;
-using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Entities.Users;
 using Ambev.DeveloperEvaluation.Domain.Entities.Carts;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.Carts.TestData;

@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Common;
+using Ambev.DeveloperEvaluation.Domain.Entities.Users;
 using Ambev.DeveloperEvaluation.Domain.Validation.Carts;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities.Carts;
