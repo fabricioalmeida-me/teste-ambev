@@ -26,6 +26,17 @@ public class CreateUserRequest
     /// Gets or sets the email address. Must be a valid email format.
     /// </summary>
     public string Email { get; set; } = string.Empty;
+    
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+
+    public string City { get; set; } = string.Empty;
+    public string Street { get; set; } = string.Empty;
+    public int Number { get; set; }
+    public string ZipCode { get; set; } = string.Empty;
+
+    public string Latitude { get; set; } = string.Empty;
+    public string Longitude { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the initial status of the user account.

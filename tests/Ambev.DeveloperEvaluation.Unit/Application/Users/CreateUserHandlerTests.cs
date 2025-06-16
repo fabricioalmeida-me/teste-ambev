@@ -2,6 +2,7 @@ using Ambev.DeveloperEvaluation.Application.Users.CreateUser;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Domain.Entities.Users;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.Domain.ValueObject.Users;
 using Ambev.DeveloperEvaluation.Unit.Domain;
 using AutoMapper;
 using FluentAssertions;
@@ -42,11 +43,12 @@ public class CreateUserHandlerTests
         var command = CreateUserHandlerTestData.GenerateValidCommand();
         var user = new User
         {
-            Id = Guid.NewGuid(),
             Username = command.Username,
-            Password = command.Password,
             Email = command.Email,
+            Password = command.Password,
             Phone = command.Phone,
+            Name = new Name(command.FirstName, command.LastName),
+            Address = new Address(command.City, command.Street, command.Number, command.ZipCode, new GeoLocation(command.Latitude, command.Longitude)),
             Status = command.Status,
             Role = command.Role
         };
@@ -55,7 +57,6 @@ public class CreateUserHandlerTests
         {
             Id = user.Id,
         };
-
 
         _mapper.Map<User>(command).Returns(user);
         _mapper.Map<CreateUserResult>(user).Returns(result);
@@ -99,13 +100,15 @@ public class CreateUserHandlerTests
         var command = CreateUserHandlerTestData.GenerateValidCommand();
         var originalPassword = command.Password;
         const string hashedPassword = "h@shedPassw0rd";
+
         var user = new User
         {
-            Id = Guid.NewGuid(),
             Username = command.Username,
-            Password = command.Password,
             Email = command.Email,
+            Password = command.Password,
             Phone = command.Phone,
+            Name = new Name(command.FirstName, command.LastName),
+            Address = new Address(command.City, command.Street, command.Number, command.ZipCode, new GeoLocation(command.Latitude, command.Longitude)),
             Status = command.Status,
             Role = command.Role
         };
@@ -135,11 +138,12 @@ public class CreateUserHandlerTests
         var command = CreateUserHandlerTestData.GenerateValidCommand();
         var user = new User
         {
-            Id = Guid.NewGuid(),
             Username = command.Username,
-            Password = command.Password,
             Email = command.Email,
+            Password = command.Password,
             Phone = command.Phone,
+            Name = new Name(command.FirstName, command.LastName),
+            Address = new Address(command.City, command.Street, command.Number, command.ZipCode, new GeoLocation(command.Latitude, command.Longitude)),
             Status = command.Status,
             Role = command.Role
         };

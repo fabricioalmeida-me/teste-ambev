@@ -11,11 +11,10 @@ public class GetUserResponse
     /// The unique identifier of the user
     /// </summary>
     public Guid Id { get; set; }
-
-    /// <summary>
-    /// The user's full name
-    /// </summary>
-    public string Name { get; set; } = string.Empty;
+    
+    public string Username { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
 
     /// <summary>
     /// The user's email address
@@ -26,6 +25,14 @@ public class GetUserResponse
     /// The user's phone number
     /// </summary>
     public string Phone { get; set; } = string.Empty;
+    
+    public string City { get; set; } = string.Empty;
+    public string Street { get; set; } = string.Empty;
+    public int Number { get; set; }
+    public string ZipCode { get; set; } = string.Empty;
+
+    public string Latitude { get; set; } = string.Empty;
+    public string Longitude { get; set; } = string.Empty;
 
     /// <summary>
     /// The user's role in the system
