@@ -1,9 +1,8 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Text.RegularExpressions;
 
-namespace Ambev.DeveloperEvaluation.ORM.Mapping;
+namespace Ambev.DeveloperEvaluation.ORM.Mapping.Users;
 
 public class UserConfiguration : IEntityTypeConfiguration<User>
 {
@@ -26,6 +25,26 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.Role)
             .HasConversion<string>()
             .HasMaxLength(20);
+        
+        builder.OwnsOne(u => u.Name, name =>
+        {
+            name.Property(n => n.Firstname).HasMaxLength(50);
+            name.Property(n => n.Lastname).HasMaxLength(50);
+        });
+        
+        builder.OwnsOne(u => u.Address, address =>
+        {
+            address.Property(a => a.City).HasMaxLength(100);
+            address.Property(a => a.Street).HasMaxLength(100);
+            address.Property(a => a.Number);
+            address.Property(a => a.Zipcode).HasMaxLength(20);
+
+            address.OwnsOne(a => a.Geolocation, geo =>
+            {
+                geo.Property(g => g.Lat).HasMaxLength(20);
+                geo.Property(g => g.Long).HasMaxLength(20);
+            });
+        });
 
     }
 }
