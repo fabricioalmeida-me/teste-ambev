@@ -1,6 +1,6 @@
 using Ambev.DeveloperEvaluation.Application.Products.Shared;
 
-namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetAllProductsQuery;
+namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetAllProducts;
 
 public class GetAllProductsResult
 {

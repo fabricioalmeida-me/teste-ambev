@@ -1,4 +1,4 @@
-namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetAllCategoriesQuery;
+namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetAllCategories;
 
 public class GetAllCategoriesResult 
 {

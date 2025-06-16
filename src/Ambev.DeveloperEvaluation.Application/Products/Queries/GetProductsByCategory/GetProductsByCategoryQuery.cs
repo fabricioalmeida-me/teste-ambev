@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductsByCategoryQuery;
+namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductsByCategory;
 
 public record GetProductsByCategoryQuery(
     string Category,

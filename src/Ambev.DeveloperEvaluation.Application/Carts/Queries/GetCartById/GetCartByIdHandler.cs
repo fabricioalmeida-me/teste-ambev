@@ -4,10 +4,12 @@ using AutoMapper;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using OneOf.Types;
+using OneOf;
 
 namespace Ambev.DeveloperEvaluation.Application.Carts.Queries.GetCartById;
 
-public class GetCartByIdHandler : IRequestHandler<GetCartByIdQuery, GetCartByIdResult>
+public class GetCartByIdHandler : IRequestHandler<GetCartByIdQuery, OneOf<GetCartByIdResult, NotFound>>
 {
     private readonly ICartRepository _cartRepository;
     private readonly IMapper _mapper;
@@ -26,7 +28,7 @@ public class GetCartByIdHandler : IRequestHandler<GetCartByIdQuery, GetCartByIdR
         _cache = cache;
     }
 
-    public async Task<GetCartByIdResult> Handle(GetCartByIdQuery request, CancellationToken cancellationToken)
+    public async Task<OneOf<GetCartByIdResult, NotFound>> Handle(GetCartByIdQuery request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Fetching cart with ID {CartId}", request.Id);
 
@@ -43,18 +45,17 @@ public class GetCartByIdHandler : IRequestHandler<GetCartByIdQuery, GetCartByIdR
 
         var cacheKey = $"carts:{request.Id}";
         var cached = await _cache.GetAsync<GetCartByIdResult>(cacheKey, cancellationToken);
-        // if (cached is not null)
-        //     return cached;
+        if (cached is not null)
+            return cached;
 
         var cart = await _cartRepository.GetByIdAsync(request.Id, cancellationToken);
         if (cart is null)
         {
             _logger.LogWarning("Cart not found for ID {CartId}", request.Id);
-            throw new KeyNotFoundException($"Cart with ID {request.Id} not found.");
+            return new NotFound();
         }
 
         var result = _mapper.Map<GetCartByIdResult>(cart);
-
         await _cache.SetAsync(cacheKey, result, TimeSpan.FromMinutes(5), cancellationToken);
 
         return result;

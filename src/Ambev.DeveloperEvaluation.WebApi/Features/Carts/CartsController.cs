@@ -41,12 +41,19 @@ public class CartsController : BaseController
         var command = _mapper.Map<CreateCartCommand>(request);
         var result = await _mediator.Send(command, cancellationToken);
     
-        return Created(string.Empty, new ApiResponseWithData<CreateCartResponse>
-        {
-            Success = true,
-            Message = "Cart created successfully.",
-            Data = _mapper.Map<CreateCartResponse>(result)
-        });
+        return result.Match<IActionResult>(
+            success => Created(string.Empty, new ApiResponseWithData<CreateCartResponse>
+            {
+                Success = true,
+                Message = "Cart created successfully.",
+                Data = _mapper.Map<CreateCartResponse>(success)
+            }),
+            notFound => NotFound(new ApiResponse
+            {
+                Success = false,
+                Message = "User or product not found."
+            })
+        );
     }
     
     [HttpDelete("{id}")]
@@ -58,19 +65,27 @@ public class CartsController : BaseController
         var request = new DeleteCartRequest { Id = id };
         var validator = new DeleteCartRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
-    
+
         if (!validationResult.IsValid)
             return BadRequest(validationResult.Errors);
-    
+
         var command = _mapper.Map<DeleteCartCommand>(request.Id);
-        await _mediator.Send(command, cancellationToken);
-    
-        return Ok(new ApiResponse
-        {
-            Success = true,
-            Message = "Cart deleted successfully."
-        });
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return result.Match<IActionResult>(
+            success => Ok(new ApiResponse
+            {
+                Success = true,
+                Message = success.Message
+            }),
+            notFound => NotFound(new ApiResponse
+            {
+                Success = false,
+                Message = "Cart not found."
+            })
+        );
     }
+
     
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(ApiResponseWithData<UpdateCartResponse>), StatusCodes.Status200OK)]
@@ -92,12 +107,19 @@ public class CartsController : BaseController
     
         var result = await _mediator.Send(command, cancellationToken);
     
-        return Ok(new ApiResponseWithData<UpdateCartResponse>
-        {
-            Success = true,
-            Message = "Cart updated successfully.",
-            Data = _mapper.Map<UpdateCartResponse>(result)
-        });
+        return result.Match<IActionResult>(
+            success => Ok(new ApiResponseWithData<UpdateCartResponse>
+            {
+                Success = true,
+                Message = "Cart updated successfully.",
+                Data = _mapper.Map<UpdateCartResponse>(success)
+            }),
+            notFound => NotFound(new ApiResponse
+            {
+                Success = false,
+                Message = "User or cart not found."
+            })
+        );
     }
     
     [HttpGet]
@@ -143,18 +165,18 @@ public class CartsController : BaseController
         var query = _mapper.Map<GetCartByIdQuery>(request);
         var result = await _mediator.Send(query, cancellationToken);
     
-        if (result == null)
-            return NotFound(new ApiResponse
+        return result.Match<IActionResult>(
+            success => Ok(new ApiResponseWithData<GetCartByIdResponse>
+            {
+                Success = true,
+                Message = "Cart retrieved successfully.",
+                Data = _mapper.Map<GetCartByIdResponse>(success)
+            }),
+            notFound => NotFound(new ApiResponse
             {
                 Success = false,
                 Message = $"Cart with ID {id} not found."
-            });
-    
-        return Ok(new ApiResponseWithData<GetCartByIdResponse>
-        {
-            Success = true,
-            Message = "Cart retrieved successfully.",
-            Data = _mapper.Map<GetCartByIdResponse>(result)
-        });
+            })
+        );
     }
 }

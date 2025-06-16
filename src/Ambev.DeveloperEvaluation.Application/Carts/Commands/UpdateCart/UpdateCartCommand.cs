@@ -1,8 +1,10 @@
 using MediatR;
+using OneOf.Types;
+using OneOf;
 
 namespace Ambev.DeveloperEvaluation.Application.Carts.Commands.UpdateCart;
 
-public class UpdateCartCommand : IRequest<UpdateCartResult>
+public class UpdateCartCommand : IRequest<OneOf<UpdateCartResult, NotFound>>
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }

@@ -4,7 +4,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetAllCategoriesQuery;
+namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetAllCategories;
 
 public class GetAllCategoriesHandler : IRequestHandler<GetAllCategoriesQuery, GetAllCategoriesResult>
 {

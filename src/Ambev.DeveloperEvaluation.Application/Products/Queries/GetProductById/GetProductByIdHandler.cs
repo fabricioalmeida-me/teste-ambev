@@ -4,10 +4,12 @@ using AutoMapper;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using OneOf.Types;
+using OneOf;
 
-namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductByIdQuery;
+namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductById;
 
-public class GetProductByIdHandler : IRequestHandler<GetProductByIdQuery, GetProductByIdResult>
+public class GetProductByIdHandler : IRequestHandler<GetProductByIdQuery, OneOf<GetProductByIdResult, NotFound>>
 {
     private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
@@ -26,7 +28,7 @@ public class GetProductByIdHandler : IRequestHandler<GetProductByIdQuery, GetPro
         _cacheService = cacheService;
     }
 
-    public async Task<GetProductByIdResult> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
+    public async Task<OneOf<GetProductByIdResult, NotFound>> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Handling GetProductById request. Product ID: {ProductId}", request.Id);
         
@@ -48,7 +50,10 @@ public class GetProductByIdHandler : IRequestHandler<GetProductByIdQuery, GetPro
         
         var product = await _productRepository.GetByIdAsync(request.Id, cancellationToken);
         if (product == null)
-            throw new KeyNotFoundException($"Product with ID {request.Id} not found.");
+        {
+            _logger.LogWarning("Product not found. ID: {ProductId}", request.Id);
+            return new NotFound();
+        }
         
         var result = _mapper.Map<GetProductByIdResult>(product);
         

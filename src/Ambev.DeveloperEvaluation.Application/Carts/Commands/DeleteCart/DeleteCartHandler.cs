@@ -2,10 +2,12 @@ using Ambev.DeveloperEvaluation.Domain.Repositories;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using OneOf.Types;
+using OneOf;
 
 namespace Ambev.DeveloperEvaluation.Application.Carts.Commands.DeleteCart;
 
-public class DeleteCartHandler : IRequestHandler<DeleteCartCommand, DeleteCartResult>
+public class DeleteCartHandler : IRequestHandler<DeleteCartCommand, OneOf<DeleteCartResult, NotFound>>
 {
     private readonly ICartRepository _cartRepository;
     private readonly ILogger<DeleteCartHandler> _logger;
@@ -16,7 +18,7 @@ public class DeleteCartHandler : IRequestHandler<DeleteCartCommand, DeleteCartRe
         _logger = logger;
     }
 
-    public async Task<DeleteCartResult> Handle(DeleteCartCommand request, CancellationToken cancellationToken)
+    public async Task<OneOf<DeleteCartResult, NotFound>> Handle(DeleteCartCommand request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Handling delete cart request. CartId: {CartId}", request.Id);
 
@@ -35,7 +37,7 @@ public class DeleteCartHandler : IRequestHandler<DeleteCartCommand, DeleteCartRe
         if (!cartExists)
         {
             _logger.LogWarning("Cart with ID {CartId} not found.", request.Id);
-            throw new KeyNotFoundException($"Cart with ID {request.Id} not found.");
+            return new NotFound();
         }
 
         var success = await _cartRepository.DeleteAsync(request.Id, cancellationToken);

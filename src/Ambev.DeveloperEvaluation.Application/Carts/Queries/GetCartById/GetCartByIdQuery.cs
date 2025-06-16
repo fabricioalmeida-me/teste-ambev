@@ -1,8 +1,10 @@
 using MediatR;
+using OneOf.Types;
+using OneOf;
 
 namespace Ambev.DeveloperEvaluation.Application.Carts.Queries.GetCartById;
 
-public class GetCartByIdQuery : IRequest<GetCartByIdResult>
+public class GetCartByIdQuery : IRequest<OneOf<GetCartByIdResult, NotFound>>
 {
     public Guid Id { get; set; }
 

@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Application.Carts.Commands.CreateCart;
 using Ambev.DeveloperEvaluation.Application.Carts.Services;
+using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Entities.Carts;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.Carts.TestData;
@@ -9,6 +10,7 @@ using FluentAssertions;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using OneOf.Types;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Unit.Application.Carts;
@@ -16,6 +18,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Carts;
 public class CreateCartHandlerTests
 {
     private readonly ICartRepository _cartRepository;
+    private readonly IUserRepository _userRepository;
     private readonly ICartService _cartService;
     private readonly IMapper _mapper;
     private readonly ILogger<CreateCartHandler> _logger;
@@ -24,37 +27,39 @@ public class CreateCartHandlerTests
     public CreateCartHandlerTests()
     {
         _cartRepository = Substitute.For<ICartRepository>();
+        _userRepository = Substitute.For<IUserRepository>();
         _cartService = Substitute.For<ICartService>();
         _mapper = Substitute.For<IMapper>();
         _logger = Substitute.For<ILogger<CreateCartHandler>>();
-        _handler = new CreateCartHandler(_cartRepository, _cartService, _mapper, _logger);
+        _handler = new CreateCartHandler(_cartRepository, _userRepository, _cartService, _mapper, _logger);
     }
 
-    [Fact(DisplayName = "Given valid cart data When creating cart Then returns success response")]
-    public async Task Handle_ValidRequest_ReturnsSuccessResponse()
+    [Fact(DisplayName = "Given valid cart data When creating cart Then returns success result")]
+    public async Task Handle_ValidRequest_ReturnsSuccess()
     {
         // Arrange
         var command = CreateCartHandlerTestData.GenerateValidCommand();
-        var createdCart = CartTestData.GenerateValidCart(command.UserId);
+        var cart = CartTestData.GenerateValidCart(command.UserId);
+        var user = UserTestData.GenerateValidUser();
 
-        var result = new CreateCartResult { Id = createdCart.Id };
+        _userRepository.GetByIdAsync(command.UserId, Arg.Any<CancellationToken>())
+            .Returns(user);
 
         _cartRepository.CreateAsync(Arg.Any<Cart>(), Arg.Any<CancellationToken>())
-            .Returns(createdCart);
+            .Returns(cart);
 
-        _cartRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns(createdCart);
+        _cartRepository.GetByIdAsync(cart.Id, Arg.Any<CancellationToken>())
+            .Returns(cart);
 
-        _mapper.Map<CreateCartResult>(Arg.Any<Cart>()).Returns(result);
+        var expectedResult = new CreateCartResult { Id = cart.Id };
+        _mapper.Map<CreateCartResult>(cart).Returns(expectedResult);
 
         // Act
-        var createCartResult = await _handler.Handle(command, CancellationToken.None);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        createCartResult.Should().NotBeNull();
-        createCartResult.Id.Should().Be(createdCart.Id);
-        await _cartRepository.Received(1).CreateAsync(Arg.Any<Cart>(), Arg.Any<CancellationToken>());
-        await _cartRepository.Received(1).GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        result.IsT0.Should().BeTrue();
+        result.AsT0.Id.Should().Be(expectedResult.Id);
     }
 
     [Fact(DisplayName = "Given invalid cart data When creating cart Then throws validation exception")]
@@ -64,7 +69,7 @@ public class CreateCartHandlerTests
         var invalidCommand = new CreateCartCommand();
 
         // Act
-        var act = () => _handler.Handle(invalidCommand, CancellationToken.None);
+        var act = async () => await _handler.Handle(invalidCommand, CancellationToken.None);
 
         // Assert
         await act.Should().ThrowAsync<ValidationException>();
@@ -75,15 +80,19 @@ public class CreateCartHandlerTests
     {
         // Arrange
         var command = CreateCartHandlerTestData.GenerateValidCommand();
-        var createdCart = CartTestData.GenerateValidCart(command.UserId);
+        var cart = CartTestData.GenerateValidCart(command.UserId);
+        var user = UserTestData.GenerateValidUser();
+
+        _userRepository.GetByIdAsync(command.UserId, Arg.Any<CancellationToken>())
+            .Returns(user);
 
         _cartRepository.CreateAsync(Arg.Any<Cart>(), Arg.Any<CancellationToken>())
-            .Returns(createdCart);
+            .Returns(cart);
 
-        _cartRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns(createdCart);
+        _cartRepository.GetByIdAsync(cart.Id, Arg.Any<CancellationToken>())
+            .Returns(cart);
 
-        _mapper.Map<CreateCartResult>(Arg.Any<Cart>()).Returns(new CreateCartResult { Id = createdCart.Id });
+        _mapper.Map<CreateCartResult>(Arg.Any<Cart>()).Returns(new CreateCartResult { Id = cart.Id });
 
         // Act
         await _handler.Handle(command, CancellationToken.None);
@@ -91,7 +100,24 @@ public class CreateCartHandlerTests
         // Assert
         foreach (var item in command.Products)
         {
-            await _cartService.Received(1).AddItemAsync(createdCart.Id, item.ProductId, item.Quantity, Arg.Any<CancellationToken>());
+            await _cartService.Received(1).AddItemAsync(cart.Id, item.ProductId, item.Quantity, Arg.Any<CancellationToken>());
         }
+    }
+
+    [Fact(DisplayName = "Given user not found When creating cart Then returns NotFound")]
+    public async Task Handle_UserNotFound_ReturnsNotFound()
+    {
+        // Arrange
+        var command = CreateCartHandlerTestData.GenerateValidCommand();
+
+        _userRepository.GetByIdAsync(command.UserId, Arg.Any<CancellationToken>())
+            .Returns((User?)null);
+
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsT1.Should().BeTrue(); // T1 == NotFound
+        result.AsT1.Should().BeOfType<NotFound>();
     }
 }

@@ -3,10 +3,12 @@ using AutoMapper;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using OneOf.Types;
+using OneOf;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.Commands.UpdateProduct;
 
-public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, UpdateProductResult>
+public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, OneOf<UpdateProductResult, NotFound>>
 {
     private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
@@ -19,7 +21,7 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, Update
         _logger = logger;
     }
     
-    public async Task<UpdateProductResult> Handle(UpdateProductCommand command, CancellationToken cancellationToken)
+    public async Task<OneOf<UpdateProductResult, NotFound>> Handle(UpdateProductCommand command, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Starting update for product with ID: {ProductId}", command.Id);
         
@@ -38,7 +40,7 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, Update
         if (product == null)
         {
             _logger.LogWarning("Product with ID: {ProductId} not found for update.", command.Id);
-            throw new InvalidOperationException($"Product with ID {command.Id} not found.");
+            return new NotFound();
         }
         
         product.Update(

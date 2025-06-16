@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductsByCategoryQuery;
+namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductsByCategory;
 
 public class GetProductsByCategoryValidator : AbstractValidator<GetProductsByCategoryQuery>
 {

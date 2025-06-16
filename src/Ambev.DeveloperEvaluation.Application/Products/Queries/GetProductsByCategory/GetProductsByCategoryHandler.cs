@@ -5,7 +5,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductsByCategoryQuery;
+namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductsByCategory;
 
 public class GetProductsByCategoryHandler : IRequestHandler<GetProductsByCategoryQuery, List<GetProductsByCategoryResult>>
 {

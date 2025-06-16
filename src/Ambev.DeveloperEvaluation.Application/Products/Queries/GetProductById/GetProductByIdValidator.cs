@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductByIdQuery;
+namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductById;
 
 public class GetProductByIdValidator : AbstractValidator<GetProductByIdQuery>
 {

@@ -1,6 +1,6 @@
 using Ambev.DeveloperEvaluation.Application.Products.Shared;
 
-namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductByIdQuery;
+namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductById;
 
 public class GetProductByIdResult
 {

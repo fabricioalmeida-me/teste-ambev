@@ -1,13 +1,12 @@
-using System.Security.AccessControl;
 using Ambev.DeveloperEvaluation.Application.Products.Shared;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using OneOf.Types;
+using OneOf;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.Commands.UpdateProduct;
 
-public class UpdateProductCommand : IRequest<UpdateProductResult>
+public class UpdateProductCommand : IRequest<OneOf<UpdateProductResult, NotFound>>
 {
     public Guid Id { get; set; }
 
