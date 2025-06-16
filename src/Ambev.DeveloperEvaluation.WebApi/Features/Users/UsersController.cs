@@ -8,7 +8,9 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Users.DeleteUser;
 using Ambev.DeveloperEvaluation.Application.Users.CreateUser;
 using Ambev.DeveloperEvaluation.Application.Users.GetUser;
 using Ambev.DeveloperEvaluation.Application.Users.DeleteUser;
+using Ambev.DeveloperEvaluation.Application.Users.UpdateUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetAllUsers;
+using Ambev.DeveloperEvaluation.WebApi.Features.Users.UpdateUser;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Users;
 
@@ -171,6 +173,42 @@ public class UsersController : BaseController
                 Message = "No users found."
             }));
     }
+    
+    /// <summary>
+    /// Updates a user by their ID
+    /// </summary>
+    /// <param name="id">User ID</param>
+    /// <param name="request">Updated user data</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Updated user response or not found</returns>
+    [HttpPut("{id}")]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
+    {
+        var validator = new UpdateUserRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var command = _mapper.Map<UpdateUserCommand>((id, request));
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return result.Match<IActionResult>(
+            _ => Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "User updated successfully"
+            }),
+            notFound => NotFound(new ApiResponse
+            {
+                Success = false,
+                Message = "User not found"
+            })
+        );
+    }
+
 
 
 }
