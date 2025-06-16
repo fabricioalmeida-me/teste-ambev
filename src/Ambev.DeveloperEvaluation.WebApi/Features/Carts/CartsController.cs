@@ -11,10 +11,12 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Carts.GetCartById;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.UpdateCart;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class CartsController : BaseController

@@ -15,10 +15,12 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProductsByCategory;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.UpdateProduct;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products;
 
+[Authorize(Roles = "Admin, Manager")]
 [ApiController]
 [Route("api/[controller]")]
 public class ProductsController : BaseController
