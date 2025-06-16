@@ -72,4 +72,65 @@ public class UserRepository : IUserRepository
         await _context.SaveChangesAsync(cancellationToken);
         return true;
     }
+    
+    /// <summary>
+    /// Get all users from the repository
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    public async Task<(IEnumerable<User> Users, int TotalItems)> GetAllAsync(int page, int size, string? orderBy, CancellationToken cancellationToken = default)
+    {
+        var query = _context.Users.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(orderBy))
+        {
+            var fields = orderBy.Split(',');
+            foreach (var field in fields.Reverse())
+            {
+                var trimmed = field.Trim();
+                var descending = trimmed.EndsWith(" desc", StringComparison.OrdinalIgnoreCase);
+                var propertyName = trimmed.Replace(" desc", "", StringComparison.OrdinalIgnoreCase).Replace(" asc", "", StringComparison.OrdinalIgnoreCase);
+
+                if (!string.IsNullOrWhiteSpace(propertyName))
+                {
+                    query = descending
+                        ? query.OrderByDescending(e => EF.Property<object>(e, propertyName))
+                        : query.OrderBy(e => EF.Property<object>(e, propertyName));
+                }
+            }
+        }
+
+        var totalItems = await query.CountAsync(cancellationToken);
+        var users = await query
+            .Skip((page - 1) * size)
+            .Take(size)
+            .ToListAsync(cancellationToken);
+
+        return (users, totalItems);
+    }
+    
+    /// <summary>
+    /// Update a user from the repository
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    public async Task<User?> UpdateAsync(User user, CancellationToken cancellationToken = default)
+    {
+        var existing = await _context.Users.FirstOrDefaultAsync(x => x.Id == user.Id, cancellationToken);
+        if (existing is null)
+            return null;
+
+        _context.Entry(existing).CurrentValues.SetValues(user);
+        
+        existing.Username = user.Username;
+        existing.Email = user.Email;
+        existing.Phone = user.Phone;
+        existing.Status = user.Status;
+        existing.Role = user.Role;
+        existing.UpdatedAt = DateTime.UtcNow;
+        existing.Password = user.Password;
+        existing.Address = user.Address;
+        existing.Name = user.Name;
+
+        await _context.SaveChangesAsync(cancellationToken);
+        return existing;
+    }
 }
