@@ -2,9 +2,10 @@ using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Enums;
-using Ambev.DeveloperEvaluation.Domain.Validation;
+using Ambev.DeveloperEvaluation.Domain.Validation.Users;
+using Ambev.DeveloperEvaluation.Domain.ValueObject.Users;
 
-namespace Ambev.DeveloperEvaluation.Domain.Entities;
+namespace Ambev.DeveloperEvaluation.Domain.Entities.Users;
 
 
 /// <summary>
@@ -77,6 +78,16 @@ public class User : BaseEntity, IUser
     /// </summary>
     /// <returns>The user's role as a string.</returns>
     string IUser.Role => Role.ToString();
+    
+    /// <summary>
+    /// Name.
+    /// </summary>
+    public Name Name { get; set; } = new();
+    
+    /// <summary>
+    /// Address.
+    /// </summary>
+    public Address Address { get; set; } = new();
 
     /// <summary>
     /// Initializes a new instance of the User class.

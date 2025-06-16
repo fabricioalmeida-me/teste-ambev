@@ -18,6 +18,9 @@ public static class CreateUserHandlerTestData
     /// - Password (meeting complexity requirements)
     /// - Email (valid format)
     /// - Phone (Brazilian format)
+    /// - FirstName and LastName
+    /// - City, Street, Number, ZipCode
+    /// - Latitude and Longitude
     /// - Status (Active or Suspended)
     /// - Role (Customer or Admin)
     /// </summary>
@@ -26,6 +29,14 @@ public static class CreateUserHandlerTestData
         .RuleFor(u => u.Password, f => $"Test@{f.Random.Number(100, 999)}")
         .RuleFor(u => u.Email, f => f.Internet.Email())
         .RuleFor(u => u.Phone, f => $"+55{f.Random.Number(11, 99)}{f.Random.Number(100000000, 999999999)}")
+        .RuleFor(u => u.FirstName, f => f.Name.FirstName())
+        .RuleFor(u => u.LastName, f => f.Name.LastName())
+        .RuleFor(u => u.City, f => f.Address.City())
+        .RuleFor(u => u.Street, f => f.Address.StreetName())
+        .RuleFor(u => u.Number, f => f.Random.Number(1, 9999))
+        .RuleFor(u => u.ZipCode, f => f.Address.ZipCode("#####-###"))
+        .RuleFor(u => u.Latitude, f => f.Address.Latitude().ToString())
+        .RuleFor(u => u.Longitude, f => f.Address.Longitude().ToString())
         .RuleFor(u => u.Status, f => f.PickRandom(UserStatus.Active, UserStatus.Suspended))
         .RuleFor(u => u.Role, f => f.PickRandom(UserRole.Customer, UserRole.Admin));
 

@@ -1,6 +1,6 @@
 using Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser;
 using AutoMapper;
-using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Entities.Users;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Auth.AuthenticateUserFeature;
 

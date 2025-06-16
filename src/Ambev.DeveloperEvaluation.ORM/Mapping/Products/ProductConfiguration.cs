@@ -2,7 +2,7 @@ using Ambev.DeveloperEvaluation.Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Ambev.DeveloperEvaluation.ORM.Mapping;
+namespace Ambev.DeveloperEvaluation.ORM.Mapping.Products;
 
 public class ProductConfiguration : IEntityTypeConfiguration<Product>
 {
