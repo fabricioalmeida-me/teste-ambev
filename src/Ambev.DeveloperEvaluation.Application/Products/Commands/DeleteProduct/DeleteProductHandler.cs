@@ -2,10 +2,12 @@ using Ambev.DeveloperEvaluation.Domain.Repositories;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using OneOf.Types;
+using OneOf;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.Commands.DeleteProduct;
 
-public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, DeleteProductResponse>
+public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, OneOf<DeleteProductResponse, NotFound>>
 {
     private readonly IProductRepository _productRepository;
     private readonly ILogger<DeleteProductHandler> _logger;
@@ -16,7 +18,7 @@ public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, Delete
         _logger = logger;
     }
 
-    public async Task<DeleteProductResponse> Handle(DeleteProductCommand command, CancellationToken cancellationToken)
+    public async Task<OneOf<DeleteProductResponse, NotFound>> Handle(DeleteProductCommand command, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Attempting to delete product with ID: {ProductId}", command.Id);
         
@@ -37,7 +39,7 @@ public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, Delete
         if (!success)
         {
             _logger.LogWarning("Product not found. Unable to delete product with ID: {ProductId}", command.Id);
-            throw new KeyNotFoundException($"Product with ID {command.Id} not found.");
+            return new NotFound();
         }
         
         return new DeleteProductResponse { Success = success };

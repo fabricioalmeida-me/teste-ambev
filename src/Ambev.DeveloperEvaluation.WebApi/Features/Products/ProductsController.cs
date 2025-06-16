@@ -1,11 +1,10 @@
-using System.Drawing;
 using Ambev.DeveloperEvaluation.Application.Products.Commands.CreateProduct;
 using Ambev.DeveloperEvaluation.Application.Products.Commands.DeleteProduct;
 using Ambev.DeveloperEvaluation.Application.Products.Commands.UpdateProduct;
-using Ambev.DeveloperEvaluation.Application.Products.Queries.GetAllCategoriesQuery;
-using Ambev.DeveloperEvaluation.Application.Products.Queries.GetAllProductsQuery;
-using Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductByIdQuery;
-using Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductsByCategoryQuery;
+using Ambev.DeveloperEvaluation.Application.Products.Queries.GetAllCategories;
+using Ambev.DeveloperEvaluation.Application.Products.Queries.GetAllProducts;
+using Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductById;
+using Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductsByCategory;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.DeleteProduct;
@@ -70,12 +69,19 @@ public class ProductsController : BaseController
         var command = _mapper.Map<UpdateProductCommand>(request);
         var result = await _mediator.Send(command, cancellationToken);
         
-        return Ok(new ApiResponseWithData<UpdateProductResponse>
-        {
-            Success = true,
-            Message = "Product updated successfully.",
-            Data = _mapper.Map<UpdateProductResponse>(result)
-        });
+        return result.Match<IActionResult>(
+            success => Ok(new ApiResponseWithData<UpdateProductResponse>
+            {
+                Success = true,
+                Message = "Product updated successfully.",
+                Data = _mapper.Map<UpdateProductResponse>(success)
+            }),
+            notFound => NotFound(new ApiResponse
+            {
+                Success = false,
+                Message = "Product not found."
+            })
+        );
     }
 
     [HttpDelete("{id}")]
@@ -94,11 +100,18 @@ public class ProductsController : BaseController
         var command = _mapper.Map<DeleteProductCommand>(request.Id);
         var result = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponse 
-        {
-             Success = true,
-             Message = "Product deleted successfully.",
-        });
+        return result.Match<IActionResult>(
+            success => Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Product deleted successfully."
+            }),
+            notFound => NotFound(new ApiResponse
+            {
+                Success = false,
+                Message = "Product not found."
+            })
+        );
     }
 
     [HttpGet("{id}")]
@@ -117,12 +130,19 @@ public class ProductsController : BaseController
         var query = _mapper.Map<GetProductByIdQuery>(request);
         var result = await _mediator.Send(query, cancellationToken);
         
-        return Ok(new ApiResponseWithData<GetProductByIdResponse>
-        {
-            Success = true,
-            Message = "Product retrieved successfully.",
-            Data = _mapper.Map<GetProductByIdResponse>(result)
-        });
+        return result.Match<IActionResult>(
+            success => Ok(new ApiResponseWithData<GetProductByIdResponse>
+            {
+                Success = true,
+                Message = "Product retrieved successfully.",
+                Data = _mapper.Map<GetProductByIdResponse>(success)
+            }),
+            notFound => NotFound(new ApiResponse
+            {
+                Success = false,
+                Message = "Product not found."
+            })
+        );
     }
 
     [HttpGet]

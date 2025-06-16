@@ -1,4 +1,4 @@
-using Ambev.DeveloperEvaluation.Application.Products.Queries.GetAllCategoriesQuery;
+using Ambev.DeveloperEvaluation.Application.Products.Queries.GetAllCategories;
 using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.GetAllCategories;

@@ -1,11 +1,13 @@
 using MediatR;
+using OneOf.Types;
+using OneOf;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.GetUser;
 
 /// <summary>
 /// Command for retrieving a user by their ID
 /// </summary>
-public record GetUserCommand : IRequest<GetUserResult>
+public record GetUserCommand : IRequest<OneOf<GetUserResult, NotFound>>
 {
     /// <summary>
     /// The unique identifier of the user to retrieve

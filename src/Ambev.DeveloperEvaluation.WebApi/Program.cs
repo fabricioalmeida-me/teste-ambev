@@ -66,7 +66,6 @@ public class Program
                 app.UseSwagger();
                 app.UseSwaggerUI();
                 await ProductSeeder.SeedAsync(app.Services);
-                
             }
 
             app.UseHttpsRedirection();
