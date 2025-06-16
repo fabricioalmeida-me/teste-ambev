@@ -43,7 +43,11 @@ public interface IUserRepository
     /// Get all users from the repository
     /// </summary>
     /// <param name="cancellationToken">Cancellation token</param>
-    Task<(IEnumerable<User> Users, int TotalItems)> GetAllAsync(int page, int size, string? orderBy, CancellationToken cancellationToken = default);
+    Task<(IEnumerable<User> Users, int TotalItems, int TotalPages)> GetAllAsync(
+        int page,
+        int size,
+        string? orderBy,
+        CancellationToken cancellationToken = default);
     
     /// <summary>
     /// Update a user from the repository

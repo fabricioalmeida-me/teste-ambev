@@ -8,6 +8,7 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Users.DeleteUser;
 using Ambev.DeveloperEvaluation.Application.Users.CreateUser;
 using Ambev.DeveloperEvaluation.Application.Users.GetUser;
 using Ambev.DeveloperEvaluation.Application.Users.DeleteUser;
+using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetAllUsers;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Users;
 
@@ -132,4 +133,44 @@ public class UsersController : BaseController
             })
         );
     }
+    
+    [HttpGet]
+    [ProducesResponseType(typeof(ApiResponseWithData<GetAllUsersResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetAllUsers(
+        [FromQuery(Name = "_page")] int page = 1,
+        [FromQuery(Name = "_size")] int size = 10,
+        [FromQuery(Name = "_order")] string? order = null,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new Application.Users.GetAllUsers.GetAllUsersQuery(page, size, order);
+        var result = await _mediator.Send(query, cancellationToken);
+
+        return result.Match<IActionResult>(
+            success =>
+            {
+                var response = new GetAllUsersResponse
+                {
+                    Data = _mapper.Map<IReadOnlyCollection<GetAllUsersResponseItem>>(success.Data),
+                    TotalItems = success.TotalItems,
+                    CurrentPage = success.CurrentPage,
+                    TotalPages = success.TotalPages
+                };
+
+                return Ok(new ApiResponseWithData<GetAllUsersResponse>
+                {
+                    Success = true,
+                    Message = "Users retrieved successfully",
+                    Data = response
+                });
+            },
+            notFound => NotFound(new ApiResponse
+            {
+                Success = false,
+                Message = "No users found."
+            }));
+    }
+
+
 }

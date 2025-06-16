@@ -1,5 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.Domain.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories;
@@ -77,36 +78,49 @@ public class UserRepository : IUserRepository
     /// Get all users from the repository
     /// </summary>
     /// <param name="cancellationToken">Cancellation token</param>
-    public async Task<(IEnumerable<User> Users, int TotalItems)> GetAllAsync(int page, int size, string? orderBy, CancellationToken cancellationToken = default)
+    public async Task<(IEnumerable<User> Users, int TotalItems, int TotalPages)> GetAllAsync(
+        int page,
+        int size,
+        string? orderBy,
+        CancellationToken cancellationToken = default)
     {
         var query = _context.Users.AsQueryable();
-
+        
         if (!string.IsNullOrWhiteSpace(orderBy))
         {
-            var fields = orderBy.Split(',');
-            foreach (var field in fields.Reverse())
+            var orderParams = orderBy.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            bool first = true;
+            foreach (var param in orderParams)
             {
-                var trimmed = field.Trim();
+                var trimmed = param.Trim();
                 var descending = trimmed.EndsWith(" desc", StringComparison.OrdinalIgnoreCase);
-                var propertyName = trimmed.Replace(" desc", "", StringComparison.OrdinalIgnoreCase).Replace(" asc", "", StringComparison.OrdinalIgnoreCase);
+                var property = trimmed.Replace(" desc", "", StringComparison.OrdinalIgnoreCase)
+                    .Replace(" asc", "", StringComparison.OrdinalIgnoreCase);
 
-                if (!string.IsNullOrWhiteSpace(propertyName))
+                if (first)
                 {
-                    query = descending
-                        ? query.OrderByDescending(e => EF.Property<object>(e, propertyName))
-                        : query.OrderBy(e => EF.Property<object>(e, propertyName));
+                    query = descending ? query.OrderByDescendingDynamic(property)
+                        : query.OrderByDynamic(property);
+                    first = false;
+                }
+                else
+                {
+                    query = descending ? ((IOrderedQueryable<User>)query).ThenByDescendingDynamic(property)
+                        : ((IOrderedQueryable<User>)query).ThenByDynamic(property);
                 }
             }
         }
 
         var totalItems = await query.CountAsync(cancellationToken);
-        var users = await query
-            .Skip((page - 1) * size)
+        var totalPages = (int)Math.Ceiling(totalItems / (double)size);
+
+        var users = await query.Skip((page - 1) * size)
             .Take(size)
             .ToListAsync(cancellationToken);
 
-        return (users, totalItems);
+        return (users, totalItems, totalPages);
     }
+
     
     /// <summary>
     /// Update a user from the repository
